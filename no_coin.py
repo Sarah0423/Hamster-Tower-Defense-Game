@@ -4,13 +4,13 @@ import random
 import time
 import subprocess
 
-def update_button():
-    game_window.blit(pause_button, (10, 10))
-    game_window.blit(cupid_button, (650, 400))
-    game_window.blit(archer_button, (500, 400))
-    game_window.blit(defense_button, (350, 400))
-    game_window.blit(coin_button, (200, 400))
-    game_window.blit(hamster_button, (50, 400))
+def 更新按鈕():
+    屏幕.blit(暫停按鈕, (10, 10))
+    屏幕.blit(邱比特按鈕, (650, 400))
+    屏幕.blit(弓箭手按鈕, (500, 400))
+    屏幕.blit(盾牌倉鼠按鈕, (350, 400))
+    屏幕.blit(金幣倉鼠按鈕, (200, 400))
+    屏幕.blit(倉鼠按鈕, (50, 400))
 
 start_time = time.time()
 current_time = time.time()
@@ -18,375 +18,379 @@ last_cat_attack_time = time.time()
 last_dog_attack_time = time.time()
 last_bird_attack_time = time.time()
 
-hamster_button_down = 0
-coin_button_down = 0
-defense_button_down = 0
-archer_button_down = 0
-cupid_button_down = 0
+按下標誌 = 0
+金幣按下標誌 = 0
+盾牌按下標誌 = 0
+弓箭手按下標誌 = 0
+邱比特按下標誌 = 0
 
 h_arrow = 0
 h_cupid = 0
 
-num = 0
-my_hp = 10000
-enemy_hp = 10000
-win = "You Win!!"
-defeat = "You Lose..."
-end = 0
-pause = False
+編號 = 0
+倉鼠座標 = pygame.Rect(722, 280, 0, 0)
+我方城堡_生命值 = 10000
+敵方城堡_生命值 = 10000
+勝利 = "You Win!!"
+失敗 = "You Lose..."
+結束 = 0
+暫停狀態 = False
 
 pygame.init()
 
-width = 922
-height = 499
-game_window = pygame.display.set_mode((width, height))
-game_window.fill("white")
+視窗寬度 = 922
+視窗高度 = 499
+屏幕 = pygame.display.set_mode((視窗寬度, 視窗高度))
+屏幕.fill("white")
 
 BGM=pygame.mixer.Sound("audio/bgm.wav")
 BGM.play(-1)
-select = pygame.mixer.Sound("audio/choose.mp3")
-explosion = pygame.mixer.Sound("audio/explosion.mp3")
-tower_attacked = pygame.mixer.Sound("audio/tower_attack.mp3")
-hamster_appear = pygame.mixer.Sound("audio/appear.mp3")
-hamster_attack = pygame.mixer.Sound("audio/hamster_attack.mp3")
-coin_attack = pygame.mixer.Sound("audio/coin_attack.mp3")
-defense_attack = pygame.mixer.Sound("audio/defense_attack.mp3")
-shoot = pygame.mixer.Sound("audio/shoot.mp3")
-cat_appear = pygame.mixer.Sound("audio/cat_appear.mp3")
-cat_attack = pygame.mixer.Sound("audio/cat_attack.mp3")
-dog_appear = pygame.mixer.Sound("audio/dog_appear.mp3")
-dog_attack = pygame.mixer.Sound("audio/dog_attack.mp3")
-bird_appear = pygame.mixer.Sound("audio/bird_appear.mp3")
-bird_attack = pygame.mixer.Sound("audio/bird_attack.mp3")
-dead = pygame.mixer.Sound("audio/dead.mp3")
+選擇 = pygame.mixer.Sound("audio/choose.mp3")
+爆炸 = pygame.mixer.Sound("audio/explosion.mp3")
+塔被攻擊 = pygame.mixer.Sound("audio/tower_attack.mp3")
+倉鼠出現 = pygame.mixer.Sound("audio/appear.mp3")
+倉鼠攻擊 = pygame.mixer.Sound("audio/hamster_attack.mp3")
+金幣攻擊 = pygame.mixer.Sound("audio/coin_attack.mp3")
+盾牌攻擊 = pygame.mixer.Sound("audio/defense_attack.mp3")
+射擊 = pygame.mixer.Sound("audio/shoot.mp3")
+貓出現 = pygame.mixer.Sound("audio/cat_appear.mp3")
+貓攻擊 = pygame.mixer.Sound("audio/cat_attack.mp3")
+狗出現 = pygame.mixer.Sound("audio/dog_appear.mp3")
+狗攻擊 = pygame.mixer.Sound("audio/dog_attack.mp3")
+鳥出現 = pygame.mixer.Sound("audio/bird_appear.mp3")
+鳥攻擊 = pygame.mixer.Sound("audio/bird_attack.mp3")
+死亡 = pygame.mixer.Sound("audio/dead.mp3")
 
-bg = pygame.image.load("image/背景.jpg")
-bg = pygame.transform.scale(bg, (width, height))
-pause_button = pygame.image.load("image/pause.png")
-start_button = pygame.image.load("image/start.png")
-exit_button = pygame.image.load("image/button_exit.png")
-enemy_tower = pygame.image.load("image/敵堡.png")
-my_tower = pygame.image.load("image/我堡.png")
-hamster_button = pygame.image.load("image/button_hamster.png")
-coin_button = pygame.image.load("image/button_coin.png")
-defense_button = pygame.image.load("image/button_defense.png")
-archer_button = pygame.image.load("image/button_archer.png")
-cupid_button = pygame.image.load("image/button_cupid.png")
-
-archer_arrow = pygame.image.load("image/archer_arrow.png")
-cupid_arrow = pygame.image.load("image/cupid_arrow.png")
-
-
-hamster_walk1 = pygame.image.load("image/normal_walk1.png")
-hamster_walk2 = pygame.image.load("image/normal_walk2.png")
-hamster_walk3 = pygame.image.load("image/normal_walk3.png")
-hamster_walk4 = pygame.image.load("image/normal_walk4.png")
-coin_walk1 = pygame.image.load("image/coin_walk1.png")
-coin_walk2 = pygame.image.load("image/coin_walk2.png")
-coin_walk3 = pygame.image.load("image/coin_walk3.png")
-coin_walk4 = pygame.image.load("image/coin_walk4.png")
-defense_walk1 = pygame.image.load("image/defense_walk1.png")
-defense_walk2 = pygame.image.load("image/defense_walk2.png")
-defense_walk3 = pygame.image.load("image/defense_walk3.png")
-defense_walk4 = pygame.image.load("image/defense_walk4.png")
-cat_walk1 = pygame.image.load("image/cat_walk1.png")
-cat_walk2 = pygame.image.load("image/cat_walk2.png")
-cat_walk3 = pygame.image.load("image/cat_walk3.png")
-cat_walk4 = pygame.image.load("image/cat_walk2.png")
-dog_walk1 = pygame.image.load("image/dog_walk1.png")
-dog_walk2 = pygame.image.load("image/dog_walk2.png")
-dog_walk3 = pygame.image.load("image/dog_walk3.png")
-dog_walk4 = pygame.image.load("image/dog_walk2.png")
-bird_walk1 = pygame.image.load("image/bird_walk1.png")
-bird_walk2 = pygame.image.load("image/bird_walk2.png")
-bird_loved1 = pygame.image.load("image/bbb.png")
-bird_loved2 = pygame.image.load("image/bird_love2.png")
-archer = pygame.image.load("image/archer.png")
-cupid = pygame.image.load("image/cupid.png")
-
-hamster_attack1 = pygame.image.load("image/normal_attack1.png")
-hamster_attack2 = pygame.image.load("image/normal_attack2.png")
-hamster_attack3 = pygame.image.load("image/normal_attack3.png")
-coin_attack1 = pygame.image.load("image/coin_attack1.png")
-coin_attack2 = pygame.image.load("image/coin_attack2.png")
-coin_attack3 = pygame.image.load("image/coin_attack3.png")
-defense_attack1 = pygame.image.load("image/defense_attack1.png")
-defense_attack2 = pygame.image.load("image/defense_attack2.png")
-defense_attack3 = pygame.image.load("image/defense_attack3.png")
-cat_attack1 = pygame.image.load("image/cat_attack1.png")
-cat_attack2 = pygame.image.load("image/cat_attack2.png")
-dog_attack1 = pygame.image.load("image/dog_attack1.png")
-dog_attack2 = pygame.image.load("image/dog_attack2.png")
-archer_attack1 = pygame.image.load("image/archer_attack1.png")
-archer_attack2 = pygame.image.load("image/archer_attack2.png")
-archer_attack3 = pygame.image.load("image/archer_attack3.png")
-archer_attack4 = pygame.image.load("image/archer_attack4.png")
-cupid_attack1 = pygame.image.load("image/cupid_attack1.png")
-cupid_attack2 = pygame.image.load("image/cupid_attack2.png")
-cupid_attack3 = pygame.image.load("image/cupid_attack3.png")
-cupid_attack4 = pygame.image.load("image/cupid_attack4.png")
-
-enemy_tower = pygame.transform.scale(enemy_tower, (180, 320))
-my_tower = pygame.transform.scale(my_tower, (180, 320))
-
-pause_button = pygame.transform.scale(pause_button, (50, 50))
-start_button = pygame.transform.scale(start_button, (150, 150))
-exit_button = pygame.transform.scale(exit_button, (150, 60))
-hamster_button = pygame.transform.scale(hamster_button, (100, 80))
-coin_button = pygame.transform.scale(coin_button, (100, 80))
-defense_button = pygame.transform.scale(defense_button, (100, 80))
-archer_button = pygame.transform.scale(archer_button, (100, 80))
-cupid_button = pygame.transform.scale(cupid_button, (100, 80))
-archer_arrow = pygame.transform.scale(archer_arrow, (150, 150))
-cupid_arrow = pygame.transform.scale(cupid_arrow, (150, 150))
-
-hamster_walk1 = pygame.transform.scale(hamster_walk1, (150, 150))
-hamster_walk2 = pygame.transform.scale(hamster_walk2, (150, 150))
-hamster_walk3 = pygame.transform.scale(hamster_walk3, (150, 150))
-hamster_walk4 = pygame.transform.scale(hamster_walk4, (150, 150))
-
-coin_walk1 = pygame.transform.scale(coin_walk1, (150, 150))
-coin_walk2 = pygame.transform.scale(coin_walk2, (150, 150))
-coin_walk3 = pygame.transform.scale(coin_walk3, (150, 150))
-coin_walk4 = pygame.transform.scale(coin_walk4, (150, 150))
-
-defense_walk1 = pygame.transform.scale(defense_walk1, (150, 150))
-defense_walk2 = pygame.transform.scale(defense_walk2, (150, 150))
-defense_walk3 = pygame.transform.scale(defense_walk3, (150, 150))
-defense_walk4 = pygame.transform.scale(defense_walk4, (150, 150))
-
-cat_walk1 = pygame.transform.scale(cat_walk1, (150, 150))
-cat_walk2 = pygame.transform.scale(cat_walk2, (150, 150))
-cat_walk3 = pygame.transform.scale(cat_walk3, (150, 150))
-cat_walk4 = pygame.transform.scale(cat_walk4, (150, 150))
-
-dog_walk1 = pygame.transform.scale(dog_walk1, (150, 150))
-dog_walk2 = pygame.transform.scale(dog_walk2, (150, 150))
-dog_walk3 = pygame.transform.scale(dog_walk3, (150, 150))
-dog_walk4 = pygame.transform.scale(dog_walk4, (150, 150))
-
-bird_walk1 = pygame.transform.scale(bird_walk1, (150, 150))
-bird_walk2 = pygame.transform.scale(bird_walk2, (150, 150))
-
-bird_loved1 = pygame.transform.scale(bird_loved1, (150, 150))
-bird_loved2 = pygame.transform.scale(bird_loved2, (150, 150))
-
-archer = pygame.transform.scale(archer, (150, 150))
-cupid = pygame.transform.scale(cupid, (150, 150))
+背景 = pygame.image.load("image/背景.jpg")
+背景 = pygame.transform.scale(背景, (視窗寬度, 視窗高度))
+暫停按鈕 = pygame.image.load("image/pause.png")
+開始按鈕 = pygame.image.load("image/start.png")
+退出按鈕 = pygame.image.load("image/button_exit.png")
+敵人城堡 = pygame.image.load("image/敵堡.png")
+城堡 = pygame.image.load("image/我堡.png")
+倉鼠按鈕 = pygame.image.load("image/button_hamster.png")
+金幣倉鼠按鈕 = pygame.image.load("image/button_coin.png")
+盾牌倉鼠按鈕 = pygame.image.load("image/button_defense.png")
+弓箭手按鈕 = pygame.image.load("image/button_archer.png")
+邱比特按鈕 = pygame.image.load("image/button_cupid.png")
+弓箭手弓箭 = pygame.image.load("image/archer_arrow.png")
+邱比特弓箭 = pygame.image.load("image/cupid_arrow.png")
 
 
-hamster_attack1 = pygame.transform.scale(hamster_attack1, (150, 150))
-hamster_attack2 = pygame.transform.scale(hamster_attack2, (150, 150))
-hamster_attack3 = pygame.transform.scale(hamster_attack3, (150, 150))
+走動1 = pygame.image.load("image/normal_walk1.png")
+走動2 = pygame.image.load("image/normal_walk2.png")
+走動3 = pygame.image.load("image/normal_walk3.png")
+走動4 = pygame.image.load("image/normal_walk4.png")
+金幣走動1 = pygame.image.load("image/coin_walk1.png")
+金幣走動2 = pygame.image.load("image/coin_walk2.png")
+金幣走動3 = pygame.image.load("image/coin_walk3.png")
+金幣走動4 = pygame.image.load("image/coin_walk4.png")
+盾牌走動1 = pygame.image.load("image/defense_walk1.png")
+盾牌走動2 = pygame.image.load("image/defense_walk2.png")
+盾牌走動3 = pygame.image.load("image/defense_walk3.png")
+盾牌走動4 = pygame.image.load("image/defense_walk4.png")
+貓走動1 = pygame.image.load("image/cat_walk1.png")
+貓走動2 = pygame.image.load("image/cat_walk2.png")
+貓走動3 = pygame.image.load("image/cat_walk3.png")
+貓走動4 = pygame.image.load("image/cat_walk2.png")
+狗走動1 = pygame.image.load("image/dog_walk1.png")
+狗走動2 = pygame.image.load("image/dog_walk2.png")
+狗走動3 = pygame.image.load("image/dog_walk3.png")
+狗走動4 = pygame.image.load("image/dog_walk2.png")
+鳥走動1 = pygame.image.load("image/bird_walk1.png")
+鳥走動2 = pygame.image.load("image/bird_walk2.png")
+鳥超愛1 = pygame.image.load("image/bbb.png")
+鳥超愛2 = pygame.image.load("image/bird_love2.png")
+弓箭手 = pygame.image.load("image/archer.png")
+邱比特 = pygame.image.load("image/cupid.png")
 
-coin_attack1 = pygame.transform.scale(coin_attack1, (150, 150))
-coin_attack2 = pygame.transform.scale(coin_attack2, (150, 150))
-coin_attack3 = pygame.transform.scale(coin_attack3, (150, 150))
+攻擊1 = pygame.image.load("image/normal_attack1.png")
+攻擊2 = pygame.image.load("image/normal_attack2.png")
+攻擊3 = pygame.image.load("image/normal_attack3.png")
+金幣攻擊1 = pygame.image.load("image/coin_attack1.png")
+金幣攻擊2 = pygame.image.load("image/coin_attack2.png")
+金幣攻擊3 = pygame.image.load("image/coin_attack3.png")
+盾牌攻擊1 = pygame.image.load("image/defense_attack1.png")
+盾牌攻擊2 = pygame.image.load("image/defense_attack2.png")
+盾牌攻擊3 = pygame.image.load("image/defense_attack3.png")
+貓攻擊1 = pygame.image.load("image/cat_attack1.png")
+貓攻擊2 = pygame.image.load("image/cat_attack2.png")
+狗攻擊1 = pygame.image.load("image/dog_attack1.png")
+狗攻擊2 = pygame.image.load("image/dog_attack2.png")
+弓箭手攻擊1 = pygame.image.load("image/archer_attack1.png")
+弓箭手攻擊2 = pygame.image.load("image/archer_attack2.png")
+弓箭手攻擊3 = pygame.image.load("image/archer_attack3.png")
+弓箭手攻擊4 = pygame.image.load("image/archer_attack4.png")
+邱比特攻擊1 = pygame.image.load("image/cupid_attack1.png")
+邱比特攻擊2 = pygame.image.load("image/cupid_attack2.png")
+邱比特攻擊3 = pygame.image.load("image/cupid_attack3.png")
+邱比特攻擊4 = pygame.image.load("image/cupid_attack4.png")
 
-defense_attack1 = pygame.transform.scale(defense_attack1, (150, 150))
-defense_attack2 = pygame.transform.scale(defense_attack2, (150, 150))
-defense_attack3 = pygame.transform.scale(defense_attack3, (150, 150))
+敵人城堡 = pygame.transform.scale(敵人城堡, (180, 320))
+城堡 = pygame.transform.scale(城堡, (180, 320))
 
-cat_attack1 = pygame.transform.scale(cat_attack1, (150, 150))
-cat_attack2 = pygame.transform.scale(cat_attack2, (150, 150))
+暫停按鈕 = pygame.transform.scale(暫停按鈕, (50, 50))
+開始按鈕 = pygame.transform.scale(開始按鈕, (150, 150))
+退出按鈕 = pygame.transform.scale(退出按鈕, (150, 60))
+倉鼠按鈕 = pygame.transform.scale(倉鼠按鈕, (100, 80))
+金幣倉鼠按鈕 = pygame.transform.scale(金幣倉鼠按鈕, (100, 80))
+盾牌倉鼠按鈕 = pygame.transform.scale(盾牌倉鼠按鈕, (100, 80))
+弓箭手按鈕 = pygame.transform.scale(弓箭手按鈕, (100, 80))
+邱比特按鈕 = pygame.transform.scale(邱比特按鈕, (100, 80))
+弓箭手弓箭 = pygame.transform.scale(弓箭手弓箭, (150, 150))
+邱比特弓箭 = pygame.transform.scale(邱比特弓箭, (150, 150))
 
-dog_attack1 = pygame.transform.scale(dog_attack1, (150, 150))
-dog_attack2 = pygame.transform.scale(dog_attack2, (150, 150))
+走動1 = pygame.transform.scale(走動1, (150, 150))
+走動2 = pygame.transform.scale(走動2, (150, 150))
+走動3 = pygame.transform.scale(走動3, (150, 150))
+走動4 = pygame.transform.scale(走動4, (150, 150))
+
+金幣走動1 = pygame.transform.scale(金幣走動1, (150, 150))
+金幣走動2 = pygame.transform.scale(金幣走動2, (150, 150))
+金幣走動3 = pygame.transform.scale(金幣走動3, (150, 150))
+金幣走動4 = pygame.transform.scale(金幣走動4, (150, 150))
+
+盾牌走動1 = pygame.transform.scale(盾牌走動1, (150, 150))
+盾牌走動2 = pygame.transform.scale(盾牌走動2, (150, 150))
+盾牌走動3 = pygame.transform.scale(盾牌走動3, (150, 150))
+盾牌走動4 = pygame.transform.scale(盾牌走動4, (150, 150))
+
+貓走動1 = pygame.transform.scale(貓走動1, (150, 150))
+貓走動2 = pygame.transform.scale(貓走動2, (150, 150))
+貓走動3 = pygame.transform.scale(貓走動3, (150, 150))
+貓走動4 = pygame.transform.scale(貓走動4, (150, 150))
+
+狗走動1 = pygame.transform.scale(狗走動1, (150, 150))
+狗走動2 = pygame.transform.scale(狗走動2, (150, 150))
+狗走動3 = pygame.transform.scale(狗走動3, (150, 150))
+狗走動4 = pygame.transform.scale(狗走動4, (150, 150))
+
+鳥走動1 = pygame.transform.scale(鳥走動1, (150, 150))
+鳥走動2 = pygame.transform.scale(鳥走動2, (150, 150))
+
+鳥超愛1 = pygame.transform.scale(鳥超愛1, (150, 150))
+鳥超愛2 = pygame.transform.scale(鳥超愛2, (150, 150))
+
+弓箭手 = pygame.transform.scale(弓箭手, (150, 150))
+邱比特 = pygame.transform.scale(邱比特, (150, 150))
 
 
-archer_attack1 = pygame.transform.scale(archer_attack1, (150, 150))
-archer_attack2 = pygame.transform.scale(archer_attack2, (150, 150))
-archer_attack3 = pygame.transform.scale(archer_attack3, (150, 150))
-archer_attack4 = pygame.transform.scale(archer_attack4, (150, 150))
-cupid_attack1 = pygame.transform.scale(cupid_attack1, (150, 150))
-cupid_attack2 = pygame.transform.scale(cupid_attack2, (150, 150))
-cupid_attack3 = pygame.transform.scale(cupid_attack3, (150, 150))
-cupid_attack4 = pygame.transform.scale(cupid_attack4, (150, 150))
+攻擊1 = pygame.transform.scale(攻擊1, (150, 150))
+攻擊2 = pygame.transform.scale(攻擊2, (150, 150))
+攻擊3 = pygame.transform.scale(攻擊3, (150, 150))
 
-hamster_walk_list = [hamster_walk1, hamster_walk2, hamster_walk3, hamster_walk4]
-coin_walk_list = [coin_walk1, coin_walk2, coin_walk3, coin_walk4]
-defense_walk_list = [defense_walk1, defense_walk2, defense_walk3, defense_walk4]
-cat_walk_list = [cat_walk1, cat_walk2, cat_walk3, cat_walk4]
-dog_walk_list = [dog_walk1, dog_walk2, dog_walk3, dog_walk4]
-bird_walk_list = [bird_walk1, bird_walk2]
-archer_walk_list = [archer_attack1, archer_attack2]
-cupid_walk_list = [cupid_attack1, cupid_attack2]
+金幣攻擊1 = pygame.transform.scale(金幣攻擊1, (150, 150))
+金幣攻擊2 = pygame.transform.scale(金幣攻擊2, (150, 150))
+金幣攻擊3 = pygame.transform.scale(金幣攻擊3, (150, 150))
+
+盾牌攻擊1 = pygame.transform.scale(盾牌攻擊1, (150, 150))
+盾牌攻擊2 = pygame.transform.scale(盾牌攻擊2, (150, 150))
+盾牌攻擊3 = pygame.transform.scale(盾牌攻擊3, (150, 150))
+
+貓攻擊1 = pygame.transform.scale(貓攻擊1, (150, 150))
+貓攻擊2 = pygame.transform.scale(貓攻擊2, (150, 150))
+
+狗攻擊1 = pygame.transform.scale(狗攻擊1, (150, 150))
+狗攻擊2 = pygame.transform.scale(狗攻擊2, (150, 150))
+
+弓箭手攻擊1 = pygame.transform.scale(弓箭手攻擊1, (150, 150))
+弓箭手攻擊2 = pygame.transform.scale(弓箭手攻擊2, (150, 150))
+弓箭手攻擊3 = pygame.transform.scale(弓箭手攻擊3, (150, 150))
+弓箭手攻擊4 = pygame.transform.scale(弓箭手攻擊4, (150, 150))
+邱比特攻擊1 = pygame.transform.scale(邱比特攻擊1, (150, 150))
+邱比特攻擊2 = pygame.transform.scale(邱比特攻擊2, (150, 150))
+邱比特攻擊3 = pygame.transform.scale(邱比特攻擊3, (150, 150))
+邱比特攻擊4 = pygame.transform.scale(邱比特攻擊4, (150, 150))
+
+倉鼠走動列表 = [走動1, 走動2, 走動3, 走動4]
+金幣倉鼠走動列表 = [金幣走動1, 金幣走動2, 金幣走動3, 金幣走動4]
+盾牌倉鼠走動列表 = [盾牌走動1, 盾牌走動2, 盾牌走動3, 盾牌走動4]
+貓走動列表 = [貓走動1, 貓走動2, 貓走動3, 貓走動4]
+狗走動列表 = [狗走動1, 狗走動2, 狗走動3, 狗走動4]
+鳥走動列表 = [鳥走動1, 鳥走動2]
+弓箭手走動列表 = [弓箭手攻擊1, 弓箭手攻擊2]
+邱比特走動列表 = [邱比特攻擊1, 邱比特攻擊2]
 
 font = pygame.font.Font("k12x8.ttf", 20)
 font_15 = pygame.font.Font("k12x8.ttf", 15)
-enemy_word = font.render(str(enemy_hp) + "/" + "10000", True, "black")
-my_word = font.render(str(my_hp) + "/" + "10000", True, "black")
+敵方塔文字 = font.render(str(敵方城堡_生命值) + "/" + "10000", True, "black")
+我方塔文字 = font.render(str(我方城堡_生命值) + "/" + "10000", True, "black")
 
-enemy_list = []
-hamster_list = []
-enemy_sp_list = []
-hamster_sp_list = []
 
-class character:
-    def __init__(self, typ, pla, hp, power, move):
-        self.typ = typ
-        self.pla = pygame.Rect(pla[0], pla[1], pla[2], pla[3])
-        self.hp = hp
-        self.power = power
-        self.move = move
-        self.far = None
+敵人列表 = []
+倉鼠列表 = []
+敵人特殊角色列表 = []
+倉鼠特殊角色列表 = []
 
-class bird_character:
-    def __init__(self, pla, hp, move):
-        self.pla = pygame.Rect(pla[0], pla[1], pla[2], pla[3])
-        self.hp = hp
-        self.move = move
-        self.charm = False
-        self.stop_time = None
+class 角色:
+    def __init__(self, 類型, 座標, 血量, 攻擊力, 移動次數):
+        self.類型 = 類型
+        self.座標 = pygame.Rect(座標[0], 座標[1], 座標[2], 座標[3])
+        self.血量 = 血量
+        self.攻擊力 = 攻擊力
+        self.移動次數 = 移動次數
+        self.最遠座標 = None
+        self.圖片索引 = 0
 
-class hamster_character:
-    def __init__(self, typ, pla, hp, move):
-        self.typ = typ
-        self.pla = pygame.Rect(pla[0], pla[1], pla[2], pla[3])
-        self.hp = hp
-        self.move = move
+class 鳥角色:
+    def __init__(self, 座標, 血量, 移動次數):
+        self.座標 = pygame.Rect(座標[0], 座標[1], 座標[2], 座標[3])
+        self.血量 = 血量
+        self.移動次數 = 移動次數
+        self.魅惑 = False
+        self.停留開始時間 = None
+
+class 倉鼠角色:
+    def __init__(self, 類型, 座標, 血量, 移動次數):
+        self.類型 = 類型
+        self.座標 = pygame.Rect(座標[0], 座標[1], 座標[2], 座標[3])
+        self.血量 = 血量
+        self.移動次數 = 移動次數
        
        
-def generate_hamster():
-    hamster_list.append(character('hamster', (722, 280, 0, 0), 1000, 3, 0))
-def generate_coin():
-    hamster_list.append(character('coin', (722, 280, 0, 0), 500, 1, 0))
-def generate_defense():
-    hamster_list.append(character('defense', (722, 280, 0, 0), 1500, 2, 0))
-def generate_cat():
-    enemy_list.append(character('cat', (180, 280, 0, 0), 500, 3, 0))
-def generate_dog():
-    enemy_list.append(character('dog', (180, 280, 0, 0), 1000, 5, 0))
-def generate_bird():
-    enemy_sp_list.append(bird_character((0, 10, 0, 0), 200, 0))
-def generate_archer():
+def 倉鼠出擊():
+    倉鼠列表.append(角色('倉鼠', (722, 280, 0, 0), 1000, 3, 0))
+def 金幣出擊():
+    倉鼠列表.append(角色('金幣倉鼠', (722, 280, 0, 0), 500, 1, 0))
+def 盾牌出擊():
+    倉鼠列表.append(角色('盾牌倉鼠', (722, 280, 0, 0), 1500, 2, 0))
+def 貓出擊():
+    敵人列表.append(角色('貓', (180, 280, 0, 0), 500, 3, 0))
+def 狗出擊():
+    敵人列表.append(角色('狗', (180, 280, 0, 0), 1000, 5, 0))
+def 鳥出擊():
+    敵人特殊角色列表.append(鳥角色((0, 10, 0, 0), 200, 0))
+def 弓箭手出擊():
     global h_arrow
     h_arrow = 1
-    hamster_sp_list.append(hamster_character('archer', (730, 150, 0, 0), 200, 0))
-def generate_cupid():
+    倉鼠特殊角色列表.append(倉鼠角色('弓箭手', (730, 150, 0, 0), 200, 0))
+def 邱比特出擊():
     global h_cupid
     h_cupid = 1
-    hamster_sp_list.append(hamster_character('cupid', (730, 150, 0, 0), 200, 0))
+    倉鼠特殊角色列表.append(倉鼠角色('邱比特', (730, 150, 0, 0), 200, 0))
 
 
-def hamster_act():
-    global enemy_word, enemy_hp, end, h1, h2
-    for hamster in hamster_list:
-        if hamster.hp > 0:
-            target = 150 if hamster.far is None else hamster.far
-            if hamster.pla.x > target:
-                hamster.pla.x -= 6
-            elif hamster.pla.x >= target:
-                hamster.far = None
-            for enemy in enemy_list:
-                if abs(hamster.pla.x - enemy.pla.x) <= 60:
-                    hamster.far = hamster.pla.x
-                    h1 = hamster.far - 30
-                    h2 = hamster.far
-                    hamster_attack(hamster, enemy)
-            if hamster.pla.x <= 150:
-                hamster.far = hamster.pla.x
+def 倉鼠行動():
+    global 敵方塔文字, 敵方城堡_生命值, 結束, h1, h2
+    for 倉鼠 in 倉鼠列表:
+        if 倉鼠.血量 > 0:
+            目標座標 = 150 if 倉鼠.最遠座標 is None else 倉鼠.最遠座標
+            if 倉鼠.座標.x > 目標座標:
+                倉鼠.座標.x -= 6
+            elif 倉鼠.座標.x >= 目標座標:
+                倉鼠.最遠座標 = None
+            for 敵人 in 敵人列表:
+                if abs(倉鼠.座標.x - 敵人.座標.x) <= 60:
+                    倉鼠.最遠座標 = 倉鼠.座標.x
+                    h1 = 倉鼠.最遠座標 - 30
+                    h2 = 倉鼠.最遠座標
+                    攻擊(倉鼠, 敵人)
+            if 倉鼠.座標.x <= 150:
+                倉鼠.最遠座標 = 倉鼠.座標.x
                 h1 = 150
                 h2 = 180
-                attack_x = random.randint(h1, h2)
-                hamster.pla.x = attack_x
-                tower_attacked.play(0)
-                enemy_hp -= hamster.power
-                hamster.far = hamster.pla.x
-                enemy_word = font.render(str(enemy_hp) + "/" + "10000", True, "black")
-                if enemy_hp <= 0:
-                    enemy_hp = 0
-                    end()
-                    end = 1
+                攻擊x = random.randint(h1, h2)
+                倉鼠.座標.x = 攻擊x
+                塔被攻擊.play(0)
+                敵方城堡_生命值 -= 倉鼠.攻擊力
+                倉鼠.最遠座標 = 倉鼠.座標.x
+                敵方塔文字 = font.render(str(敵方城堡_生命值) + "/" + "10000", True, "black")
+                if 敵方城堡_生命值 <= 0:
+                    敵方城堡_生命值 = 0
+                    敵方塔文字 = font.render(str(敵方城堡_生命值) + "/" + "10000", True, "black")
+                    結束()
+                    結束 = 1
                
 
-def enemy_act():
-    global my_word, my_hp, end, x1, x2
-    for enemy in enemy_list:
-        if enemy.hp > 0:
-            target = 722 if enemy.far is None else enemy.far
-            if enemy.pla.x < target:
-                enemy.pla.x += 6
-            elif enemy.pla.x <= target:
-                enemy.far = None
-            for hamster in hamster_list:
-                if abs(enemy.pla.x - hamster.pla.x) <= 60:
-                    enemy.far = enemy.pla.x
-                    x1 = enemy.far - 30
-                    x2 = enemy.far
-                    hamster_attack(enemy, hamster)
-            if enemy.pla.x >= 722:
-                enemy.far = enemy.pla.x
+def 敵人行動():
+    global 我方塔文字, 我方城堡_生命值, 結束, x1, x2
+    for 敵人 in 敵人列表:
+        if 敵人.血量 > 0:
+            目標座標 = 722 if 敵人.最遠座標 is None else 敵人.最遠座標
+            if 敵人.座標.x < 目標座標:
+                敵人.座標.x += 6
+            elif 敵人.座標.x <= 目標座標:
+                敵人.最遠座標 = None
+            for 倉鼠 in 倉鼠列表:
+                if abs(敵人.座標.x - 倉鼠.座標.x) <= 60:
+                    敵人.最遠座標 = 敵人.座標.x
+                    x1 = 敵人.最遠座標 - 30
+                    x2 = 敵人.最遠座標
+                    攻擊(敵人, 倉鼠)
+            if 敵人.座標.x >= 722:
+                敵人.最遠座標 = 敵人.座標.x
                 x1 = 632
                 x2 = 662
-                attack_x = random.randint(x1, x2)
-                enemy.pla.x = attack_x
-                tower_attacked.play(0)
-                my_hp -= enemy.power
-                my_word = font.render(str(my_hp) + "/" + "10000", True, "black")
-                if my_hp <= 0:
-                    my_hp = 0
-                    end()
-                    end = 1
+                攻擊x = random.randint(x1, x2)
+                敵人.座標.x = 攻擊x
+                塔被攻擊.play(0)
+                我方城堡_生命值 -= 敵人.攻擊力
+                我方塔文字 = font.render(str(我方城堡_生命值) + "/" + "10000", True, "black")
+                if 我方城堡_生命值 <= 0:
+                    我方城堡_生命值 = 0
+                    我方塔文字 = font.render(str(我方城堡_生命值) + "/" + "10000", True, "black")
+                    結束()
+                    結束 = 1
 
-def bird_act():
+def 鳥行動():
     global h_arrow, h_cupid
-    target = 360
+    目標座標 = 360
 
-    for bird in enemy_sp_list:
-        if bird.hp > 0:
-            if bird.pla.x < target:
-                bird.pla.x += 6
-                bird.stop_time = None
-            elif bird.pla.x == target and bird.stop_time is None:
-                    bird.stop_time = time.time()
-            elif bird.pla.x == target and time.time() - bird.stop_time >= 5:
-                if bird.charm is False:
-                    bird_attack.play(0)
-                    hamster_list.clear()
-                    hamster_sp_list.clear()
-                    enemy_list.clear()
+    for 鳥 in 敵人特殊角色列表:
+        if 鳥.血量 > 0:
+            if 鳥.座標.x < 目標座標:
+                鳥.座標.x += 6
+                鳥.停留開始時間 = None
+            elif 鳥.座標.x == 目標座標 and 鳥.停留開始時間 is None:
+                    鳥.停留開始時間 = time.time()
+            elif 鳥.座標.x == 目標座標 and time.time() - 鳥.停留開始時間 >= 5:
+                if 鳥.魅惑 is False:
+                    鳥攻擊.play(0)
+                    倉鼠列表.clear()
+                    倉鼠特殊角色列表.clear()
+                    敵人列表.clear()
                     h_arrow = 0
                     h_cupid = 0
-                    bird.pla.x += 6
+                    鳥.座標.x += 6                        
                 else:
-                    bird.pla.x += 6
-            elif bird.pla.x > target and bird.pla.x <= width:
-                bird.pla.x += 6
+                   
+                    鳥.座標.x += 6
+            elif 鳥.座標.x > 目標座標 and 鳥.座標.x <= 視窗寬度:
+                鳥.座標.x += 6
                
-def update_game():
-    hamster_act()
-    enemy_act
-    bird_act()
+def 更新遊戲():
+    倉鼠行動()
+    敵人行動()
+    鳥行動()
 
-def hamster_attack(attacker, attacked):
-    if attacker.typ == 'hamster':
-        hamster_attack.play(0)
-    elif attacker.typ == 'coin':
-        coin_attack.play(0)
-    elif attacker.typ == 'defense':
-        defense_attack.play(0)
-    elif attacker.typ == 'dog':
-        dog_attack.play(0)
-    elif attacker.typ == 'cat':
-        cat_attack.play(0)
-    attacked.hp -= attacker.power
-    if attacked.hp <= 0:
-        if attacked in enemy_list:
-            dead.play(0)
-            enemy_list.remove(attacked)
+def 攻擊(攻擊者, 被攻擊者):
+    if 攻擊者.類型 == '倉鼠':
+        倉鼠攻擊.play(0)
+    elif 攻擊者.類型 == '金幣倉鼠':
+        金幣攻擊.play(0)
+    elif 攻擊者.類型 == '盾牌倉鼠':
+        盾牌攻擊.play(0)
+    elif 攻擊者.類型 == '狗':
+        狗攻擊.play(0)
+    elif 攻擊者.類型 == '貓':
+        貓攻擊.play(0)
+    被攻擊者.血量 -= 攻擊者.攻擊力
+    if 被攻擊者.血量 <= 0:
+        if 被攻擊者 in 敵人列表:
+            死亡.play(0)
+            敵人列表.remove(被攻擊者)
         else:
-            dead.play(0)
-            hamster_list.remove(attacked)
-        attacker.far = None
+            死亡.play(0)
+            倉鼠列表.remove(被攻擊者)
+        攻擊者.最遠座標 = None
 
-def end():
-    explosion.play(0)
-    global num, enemy_hp, my_hp
-    if enemy_hp == 0:
-        for num in range(12):
-            num = num + 1
-            explode_area = [
+def 結束():
+    爆炸.play(0)
+    global 編號, 敵方城堡_生命值, 我方城堡_生命值
+    if 敵方城堡_生命值 == 0:
+        for 編號 in range(12):
+            編號 = 編號 + 1
+            爆炸區域 = [
                 (170, 250, 180, 280),
                 (250, 330, 180, 280),
                 (330, 410, 180, 280),
@@ -394,58 +398,58 @@ def end():
                 (490, 570, 180, 280)
             ]
 
-            explode_hamster_x = random.randint(explode_area[0][0], explode_area[0][1])
-            explode_hamster_y = random.randint(explode_area[0][2], explode_area[0][3])
-            explode_coin_x = random.randint(explode_area[1][0], explode_area[1][1])
-            explode_coin_y = random.randint(explode_area[1][2], explode_area[1][3])
-            explode_defense_x = random.randint(explode_area[2][0], explode_area[2][1])
-            explode_defense_y = random.randint(explode_area[2][2], explode_area[2][3])
-            explode_archer_x = random.randint(explode_area[3][0], explode_area[3][1])
-            explode_archer_y = random.randint(explode_area[3][2], explode_area[3][3])
-            explode_cupid_x = random.randint(explode_area[4][0], explode_area[4][1])
-            explode_cupid_y = random.randint(explode_area[4][2], explode_area[4][3])
+            爆炸x_倉鼠 = random.randint(爆炸區域[0][0], 爆炸區域[0][1])
+            爆炸y_倉鼠 = random.randint(爆炸區域[0][2], 爆炸區域[0][3])
+            爆炸x_金幣倉鼠 = random.randint(爆炸區域[1][0], 爆炸區域[1][1])
+            爆炸y_金幣倉鼠 = random.randint(爆炸區域[1][2], 爆炸區域[1][3])
+            爆炸x_盾牌倉鼠 = random.randint(爆炸區域[2][0], 爆炸區域[2][1])
+            爆炸y_盾牌倉鼠 = random.randint(爆炸區域[2][2], 爆炸區域[2][3])
+            爆炸x_弓箭手 = random.randint(爆炸區域[3][0], 爆炸區域[3][1])
+            爆炸y_弓箭手 = random.randint(爆炸區域[3][2], 爆炸區域[3][3])
+            爆炸x_邱比特 = random.randint(爆炸區域[4][0], 爆炸區域[4][1])
+            爆炸y_邱比特 = random.randint(爆炸區域[4][2], 爆炸區域[4][3])
 
-            game_window.blit(bg, (0, 0))
-            game_window.blit(enemy_tower, (40, 100))  
-            game_window.blit(my_tower, (722, 100))
-            game_window.blit(hamster_walk_list[num % 4], (explode_hamster_x, explode_hamster_y))
-            game_window.blit(coin_walk_list[num % 4], (explode_coin_x, explode_coin_y))
-            game_window.blit(defense_walk_list[num % 4], (explode_defense_x, explode_defense_y))
-            game_window.blit(archer_walk_list[num % 2], (explode_archer_x, explode_archer_y))
-            game_window.blit(cupid_walk_list[num % 2], (explode_cupid_x, explode_cupid_y))
-            game_window.blit(enemy_word, (45, 90))
-            game_window.blit(my_word, (722, 90))
-            game_window.blit(font.render(win, True, "yellow"), (381, 250))
+            屏幕.blit(背景, (0, 0))
+            屏幕.blit(敵人城堡, (40, 100))  
+            屏幕.blit(城堡, (722, 100))
+            屏幕.blit(倉鼠走動列表[編號 % 4], (爆炸x_倉鼠, 爆炸y_倉鼠))
+            屏幕.blit(金幣倉鼠走動列表[編號 % 4], (爆炸x_金幣倉鼠, 爆炸y_金幣倉鼠))
+            屏幕.blit(盾牌倉鼠走動列表[編號 % 4], (爆炸x_盾牌倉鼠, 爆炸y_盾牌倉鼠))
+            屏幕.blit(弓箭手走動列表[編號 % 2], (爆炸x_弓箭手, 爆炸y_弓箭手))
+            屏幕.blit(邱比特走動列表[編號 % 2], (爆炸x_邱比特, 爆炸y_邱比特))
+            屏幕.blit(敵方塔文字, (45, 90))
+            屏幕.blit(我方塔文字, (722, 90))
+            屏幕.blit(font.render(勝利, True, "yellow"), (381, 250))
        
             pygame.display.update()
             pygame.time.Clock().tick(5)      
         time.sleep(1)
         
-    if my_hp == 0:
-        for num in range(26):
-            num = num + 1
-            explode_area = [
+    if 我方城堡_生命值 == 0:
+        for 編號 in range(26):
+            編號 = 編號 + 1
+            爆炸區域 = [
                 (250, 330, 180, 280),
                 (330, 410, 100, 200),
                 (410, 490, 180, 280),
             ]
 
-            explode_cat_x = random.randint(explode_area[0][0], explode_area[0][1])
-            explode_cat_y = random.randint(explode_area[0][2], explode_area[0][3])
-            explode_bird_x = random.randint(explode_area[1][0], explode_area[1][1])
-            explode_bird_y = random.randint(explode_area[1][2], explode_area[1][3])
-            explode_dog_x = random.randint(explode_area[2][0], explode_area[2][1])
-            explode_dog_y = random.randint(explode_area[2][2], explode_area[2][3])
+            爆炸x_貓 = random.randint(爆炸區域[0][0], 爆炸區域[0][1])
+            爆炸y_貓 = random.randint(爆炸區域[0][2], 爆炸區域[0][3])
+            爆炸x_鳥 = random.randint(爆炸區域[1][0], 爆炸區域[1][1])
+            爆炸y_鳥 = random.randint(爆炸區域[1][2], 爆炸區域[1][3])
+            爆炸x_狗 = random.randint(爆炸區域[2][0], 爆炸區域[2][1])
+            爆炸y_狗 = random.randint(爆炸區域[2][2], 爆炸區域[2][3])
 
-            game_window.blit(bg, (0, 0))
-            game_window.blit(enemy_tower, (40, 100))  
-            game_window.blit(my_tower, (722, 100))
-            game_window.blit(cat_walk_list[num % 4], (explode_cat_x, explode_cat_y))
-            game_window.blit(bird_walk_list[num % 2], (explode_bird_x, explode_bird_y))
-            game_window.blit(dog_walk_list[num % 4], (explode_dog_x, explode_dog_y))
-            game_window.blit(enemy_word, (45, 90))
-            game_window.blit(my_word, (722, 90))
-            game_window.blit(font.render(defeat, True, "black"), (381, 250))
+            屏幕.blit(背景, (0, 0))
+            屏幕.blit(敵人城堡, (40, 100))  
+            屏幕.blit(城堡, (722, 100))
+            屏幕.blit(貓走動列表[編號 % 4], (爆炸x_貓, 爆炸y_貓))
+            屏幕.blit(鳥走動列表[編號 % 2], (爆炸x_鳥, 爆炸y_鳥))
+            屏幕.blit(狗走動列表[編號 % 4], (爆炸x_狗, 爆炸y_狗))
+            屏幕.blit(敵方塔文字, (45, 90))
+            屏幕.blit(我方塔文字, (722, 90))
+            屏幕.blit(font.render(失敗, True, "black"), (381, 250))
        
             pygame.display.update()
             pygame.time.Clock().tick(5)      
@@ -453,9 +457,9 @@ def end():
    
     while True:
         pygame.display.update()
-        game_window.blit(bg, (0, 0))
-        game_window.blit(enemy_tower, (40, 100))
-        game_window.blit(my_tower, (722, 100))
+        屏幕.blit(背景, (0, 0))
+        屏幕.blit(敵人城堡, (40, 100))
+        屏幕.blit(城堡, (722, 100))
             
        
         for event in pygame.event.get():
@@ -468,358 +472,358 @@ def end():
 
 while True:
     if current_time - start_time >= 0.5:
-        update_game()
+        更新遊戲()
         start_time = current_time
 
-    pause_button_message = game_window.blit(pause_button, (10, 10))
-    exit_button_message = game_window.blit(exit_button, (770, 400))
-    hamster_button_message = game_window.blit(hamster_button, (50, 400))
-    coin_button_message = game_window.blit(coin_button, (200, 400))
-    defense_button_message = game_window.blit(defense_button, (350, 400))
-    archer_button_message = game_window.blit(archer_button, (500, 400))
-    cupid_button_message = game_window.blit(cupid_button, (650, 400))
+    暫停按鈕信息 = 屏幕.blit(暫停按鈕, (10, 10))
+    退出按鈕信息 = 屏幕.blit(退出按鈕, (770, 400))
+    倉鼠按鈕信息 = 屏幕.blit(倉鼠按鈕, (50, 400))
+    金幣倉鼠按鈕信息 = 屏幕.blit(金幣倉鼠按鈕, (200, 400))
+    盾牌倉鼠按鈕信息 = 屏幕.blit(盾牌倉鼠按鈕, (350, 400))
+    弓箭手按鈕信息 = 屏幕.blit(弓箭手按鈕, (500, 400))
+    邱比特按鈕信息 = 屏幕.blit(邱比特按鈕, (650, 400))
    
 
     while True:
         current_time = time.time()
-        update_game()
+        更新遊戲()
         if current_time - last_cat_attack_time >= 10:
-            cat_appear.play(0)
-            generate_cat()
+            貓出現.play(0)
+            貓出擊()
             last_cat_attack_time = current_time
 
         if current_time - last_dog_attack_time >= 20:
-            dog_appear.play(0)
-            generate_dog()
+            狗出現.play(0)
+            狗出擊()
             last_dog_attack_time = current_time
 
         if current_time - last_bird_attack_time >= 30:
-            bird_appear.play(0)
-            generate_bird()
+            鳥出現.play(0)
+            鳥出擊()
             last_bird_attack_time = current_time
            
-        update_game()
+        更新遊戲()
        
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
        
-        mouse_click = pygame.mouse.get_pressed()
+        滑鼠點擊 = pygame.mouse.get_pressed()
         (mx, my) = pygame.mouse.get_pos()
 
-        if pause:
-            start_button_message = game_window.blit(start_button, (386, 174.5))
-            exit_button_message = game_window.blit(exit_button, (770, 400))
-            game_window.blit(font.render("EXIT", True, "white"), (820, 422))
+        if 暫停狀態:
+            開始按鈕信息 = 屏幕.blit(開始按鈕, (386, 174.5))
+            退出按鈕信息 = 屏幕.blit(退出按鈕, (770, 400))
+            屏幕.blit(font.render("EXIT", True, "white"), (820, 422))
             pygame.display.update()
         
-            while pause:
+            while 暫停狀態:
                 for event in pygame.event.get():
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         (mx, my) = pygame.mouse.get_pos()
-                        if exit_button_message.collidepoint((mx, my)):
-                            select.play(0)
+                        if 退出按鈕信息.collidepoint((mx, my)):
+                            選擇.play(0)
                             pygame.time.delay(300)
                             pygame.quit()
                             subprocess.run(["python", "hamster.py"])
                             sys.exit()
-                        if start_button_message.collidepoint((mx, my)):
-                            select.play(0)
-                            pause = False
-        if mouse_click[0] and pause_button_message.collidepoint((mx, my)):
-            select.play(0)
-            pause = True
+                        if 開始按鈕信息.collidepoint((mx, my)):
+                            選擇.play(0)
+                            暫停狀態 = False
+        if 滑鼠點擊[0] and 暫停按鈕信息.collidepoint((mx, my)):
+            選擇.play(0)
+            暫停狀態 = True
 
-        if mouse_click[0] and hamster_button_message.collidepoint((mx, my)) and hamster_button_down == 0:
-            hamster_appear.play(0)
-            generate_hamster()
-            hamster_button_down = 1
-        elif mouse_click[0] and coin_button_message.collidepoint((mx, my)) and coin_button_down == 0:
-            hamster_appear.play(0)
-            generate_coin()
-            coin_button_down = 1
-        elif mouse_click[0] and defense_button_message.collidepoint((mx, my)) and defense_button_down == 0:
-            hamster_appear.play(0)
-            generate_defense()
-            defense_button_down = 1
-        elif mouse_click[0] and archer_button_message.collidepoint((mx, my)) and archer_button_down == 0 and h_arrow == 0 and h_cupid == 0:
-            hamster_appear.play(0)
-            generate_archer()
-            archer_button_down = 1
-        elif mouse_click[0] and cupid_button_message.collidepoint((mx, my)) and cupid_button_down == 0 and h_arrow == 0 and h_cupid == 0:
-            hamster_appear.play(0)
-            generate_cupid()
-            cupid_button_down = 1
+        if 滑鼠點擊[0] and 倉鼠按鈕信息.collidepoint((mx, my)) and 按下標誌 == 0:
+            倉鼠出現.play(0)
+            倉鼠出擊()
+            按下標誌 = 1
+        elif 滑鼠點擊[0] and 金幣倉鼠按鈕信息.collidepoint((mx, my)) and 金幣按下標誌 == 0:
+            倉鼠出現.play(0)
+            金幣出擊()
+            金幣按下標誌 = 1
+        elif 滑鼠點擊[0] and 盾牌倉鼠按鈕信息.collidepoint((mx, my)) and 盾牌按下標誌 == 0:
+            倉鼠出現.play(0)
+            盾牌出擊()
+            盾牌按下標誌 = 1
+        elif 滑鼠點擊[0] and 弓箭手按鈕信息.collidepoint((mx, my)) and 弓箭手按下標誌 == 0 and h_arrow == 0 and h_cupid == 0:
+            倉鼠出現.play(0)
+            弓箭手出擊()
+            弓箭手按下標誌 = 1
+        elif 滑鼠點擊[0] and 邱比特按鈕信息.collidepoint((mx, my)) and 邱比特按下標誌 == 0 and h_arrow == 0 and h_cupid == 0:
+            倉鼠出現.play(0)
+            邱比特出擊()
+            邱比特按下標誌 = 1
         else:
-            hamster_button_down = 0
-            coin_button_down = 0
-            defense_button_down = 0
-            archer_button_down = 0
-            cupid_button_down = 0
+            按下標誌 = 0
+            金幣按下標誌 = 0
+            盾牌按下標誌 = 0
+            弓箭手按下標誌 = 0
+            邱比特按下標誌 = 0
 
-        game_window.blit(bg, (0, 0))
-        game_window.blit(enemy_tower, (40, 100))
-        game_window.blit(my_tower, (722, 100))
+        屏幕.blit(背景, (0, 0))
+        屏幕.blit(敵人城堡, (40, 100))
+        屏幕.blit(城堡, (722, 100))
 
-        for hamster in hamster_list:
-            if hamster.pla.x >= 150:
-                if hamster.typ == 'hamster':
-                    if hamster.far == None:
-                        if hamster.move % 8 == 0 or hamster.move % 8 == 1:
-                            game_window.blit(hamster_walk1, (hamster.pla[0], hamster.pla[1]))
-                            hamster.move += 1
-                        elif hamster.move % 8 == 2 or hamster.move % 8 == 3:
-                            game_window.blit(hamster_walk2, (hamster.pla[0], hamster.pla[1]))
-                            hamster.move += 1
-                        elif hamster.move % 8 == 4 or hamster.move % 8 == 5:
-                            game_window.blit(hamster_walk3, (hamster.pla[0], hamster.pla[1]))
-                            hamster.move += 1
-                        elif hamster.move % 8 == 6 or hamster.move % 8 == 7:
-                            game_window.blit(hamster_walk4, (hamster.pla[0], hamster.pla[1]))
-                            hamster.move += 1
+        for 倉鼠 in 倉鼠列表:
+            if 倉鼠.座標.x >= 150:
+                if 倉鼠.類型 == '倉鼠':
+                    if 倉鼠.最遠座標 == None:
+                        if 倉鼠.移動次數 % 8 == 0 or 倉鼠.移動次數 % 8 == 1:
+                            屏幕.blit(走動1, (倉鼠.座標[0], 倉鼠.座標[1]))
+                            倉鼠.移動次數 += 1
+                        elif 倉鼠.移動次數 % 8 == 2 or 倉鼠.移動次數 % 8 == 3:
+                            屏幕.blit(走動2, (倉鼠.座標[0], 倉鼠.座標[1]))
+                            倉鼠.移動次數 += 1
+                        elif 倉鼠.移動次數 % 8 == 4 or 倉鼠.移動次數 % 8 == 5:
+                            屏幕.blit(走動3, (倉鼠.座標[0], 倉鼠.座標[1]))
+                            倉鼠.移動次數 += 1
+                        elif 倉鼠.移動次數 % 8 == 6 or 倉鼠.移動次數 % 8 == 7:
+                            屏幕.blit(走動4, (倉鼠.座標[0], 倉鼠.座標[1]))
+                            倉鼠.移動次數 += 1
                     else:
-                        if hamster.move % 3 == 0:
-                            game_window.blit(hamster_attack1, (random.randint(h1, h2), hamster.pla[1]))
-                            hamster.move += 1
-                        elif hamster.move % 3 == 1:
-                            game_window.blit(hamster_attack2, (random.randint(h1, h2), hamster.pla[1]))
-                            hamster.move += 1
-                        elif hamster.move % 3 == 2:
-                            game_window.blit(hamster_attack3, (random.randint(h1, h2), hamster.pla[1]))
-                            hamster.move += 1
-                elif hamster.typ == 'coin':
-                    if hamster.far == None:
-                        if hamster.move % 8 == 0 or hamster.move % 8 == 1:
-                            game_window.blit(coin_walk1, (hamster.pla[0], hamster.pla[1]))
-                            hamster.move += 1
-                        elif hamster.move % 8 == 2 or hamster.move % 8 == 3:
-                            game_window.blit(coin_walk2, (hamster.pla[0], hamster.pla[1]))
-                            hamster.move += 1
-                        elif hamster.move % 8 == 4 or hamster.move % 8 == 5:
-                            game_window.blit(coin_walk3, (hamster.pla[0], hamster.pla[1]))
-                            hamster.move += 1
-                        elif hamster.move % 8 == 6 or hamster.move % 8 == 7:
-                            game_window.blit(coin_walk4, (hamster.pla[0], hamster.pla[1]))
-                            hamster.move += 1
+                        if 倉鼠.移動次數 % 3 == 0:
+                            屏幕.blit(攻擊1, (random.randint(h1, h2), 倉鼠.座標[1]))
+                            倉鼠.移動次數 += 1
+                        elif 倉鼠.移動次數 % 3 == 1:
+                            屏幕.blit(攻擊2, (random.randint(h1, h2), 倉鼠.座標[1]))
+                            倉鼠.移動次數 += 1
+                        elif 倉鼠.移動次數 % 3 == 2:
+                            屏幕.blit(攻擊3, (random.randint(h1, h2), 倉鼠.座標[1]))
+                            倉鼠.移動次數 += 1
+                elif 倉鼠.類型 == '金幣倉鼠':
+                    if 倉鼠.最遠座標 == None:
+                        if 倉鼠.移動次數 % 8 == 0 or 倉鼠.移動次數 % 8 == 1:
+                            屏幕.blit(金幣走動1, (倉鼠.座標[0], 倉鼠.座標[1]))
+                            倉鼠.移動次數 += 1
+                        elif 倉鼠.移動次數 % 8 == 2 or 倉鼠.移動次數 % 8 == 3:
+                            屏幕.blit(金幣走動2, (倉鼠.座標[0], 倉鼠.座標[1]))
+                            倉鼠.移動次數 += 1
+                        elif 倉鼠.移動次數 % 8 == 4 or 倉鼠.移動次數 % 8 == 5:
+                            屏幕.blit(金幣走動3, (倉鼠.座標[0], 倉鼠.座標[1]))
+                            倉鼠.移動次數 += 1
+                        elif 倉鼠.移動次數 % 8 == 6 or 倉鼠.移動次數 % 8 == 7:
+                            屏幕.blit(金幣走動4, (倉鼠.座標[0], 倉鼠.座標[1]))
+                            倉鼠.移動次數 += 1
                     else:
-                        if hamster.move % 3 == 0:
-                            game_window.blit(coin_attack1, (random.randint(h1, h2), hamster.pla[1]))
-                            hamster.move += 1
-                        elif hamster.move % 3 == 1:
-                            game_window.blit(coin_attack2, (random.randint(h1, h2), hamster.pla[1]))
-                            hamster.move += 1
-                        elif hamster.move % 3 == 2:
-                            game_window.blit(coin_attack3, (random.randint(h1, h2), hamster.pla[1]))
-                            hamster.move += 1
-                elif hamster.typ == 'defense':
-                    if hamster.far == None:
-                        if hamster.move % 8 == 0 or hamster.move % 8 == 1:
-                            game_window.blit(defense_walk1, (hamster.pla[0], hamster.pla[1]))
-                            hamster.move += 1
-                        elif hamster.move % 8 == 2 or hamster.move % 8 == 3:
-                            game_window.blit(defense_walk2, (hamster.pla[0], hamster.pla[1]))
-                            hamster.move += 1
-                        elif hamster.move % 8 == 4 or hamster.move % 8 == 5:
-                            game_window.blit(defense_walk3, (hamster.pla[0], hamster.pla[1]))
-                            hamster.move += 1
-                        elif hamster.move % 8 == 6 or hamster.move % 8 == 7:
-                            game_window.blit(defense_walk4, (hamster.pla[0], hamster.pla[1]))
-                            hamster.move += 1
+                        if 倉鼠.移動次數 % 3 == 0:
+                            屏幕.blit(金幣攻擊1, (random.randint(h1, h2), 倉鼠.座標[1]))
+                            倉鼠.移動次數 += 1
+                        elif 倉鼠.移動次數 % 3 == 1:
+                            屏幕.blit(金幣攻擊2, (random.randint(h1, h2), 倉鼠.座標[1]))
+                            倉鼠.移動次數 += 1
+                        elif 倉鼠.移動次數 % 3 == 2:
+                            屏幕.blit(金幣攻擊3, (random.randint(h1, h2), 倉鼠.座標[1]))
+                            倉鼠.移動次數 += 1
+                elif 倉鼠.類型 == '盾牌倉鼠':
+                    if 倉鼠.最遠座標 == None:
+                        if 倉鼠.移動次數 % 8 == 0 or 倉鼠.移動次數 % 8 == 1:
+                            屏幕.blit(盾牌走動1, (倉鼠.座標[0], 倉鼠.座標[1]))
+                            倉鼠.移動次數 += 1
+                        elif 倉鼠.移動次數 % 8 == 2 or 倉鼠.移動次數 % 8 == 3:
+                            屏幕.blit(盾牌走動2, (倉鼠.座標[0], 倉鼠.座標[1]))
+                            倉鼠.移動次數 += 1
+                        elif 倉鼠.移動次數 % 8 == 4 or 倉鼠.移動次數 % 8 == 5:
+                            屏幕.blit(盾牌走動3, (倉鼠.座標[0], 倉鼠.座標[1]))
+                            倉鼠.移動次數 += 1
+                        elif 倉鼠.移動次數 % 8 == 6 or 倉鼠.移動次數 % 8 == 7:
+                            屏幕.blit(盾牌走動4, (倉鼠.座標[0], 倉鼠.座標[1]))
+                            倉鼠.移動次數 += 1
                     else:
-                        if hamster.move % 3 == 0:
-                            game_window.blit(defense_attack1, (random.randint(h1, h2), hamster.pla[1]))
-                            hamster.move += 1
-                        elif hamster.move % 3 == 1:
-                            game_window.blit(defense_attack2, (random.randint(h1, h2), hamster.pla[1]))
-                            hamster.move += 1
-                        elif hamster.move % 3 == 2:
-                            game_window.blit(defense_attack3, (random.randint(h1, h2), hamster.pla[1]))
-                            hamster.move += 1
+                        if 倉鼠.移動次數 % 3 == 0:
+                            屏幕.blit(盾牌攻擊1, (random.randint(h1, h2), 倉鼠.座標[1]))
+                            倉鼠.移動次數 += 1
+                        elif 倉鼠.移動次數 % 3 == 1:
+                            屏幕.blit(盾牌攻擊2, (random.randint(h1, h2), 倉鼠.座標[1]))
+                            倉鼠.移動次數 += 1
+                        elif 倉鼠.移動次數 % 3 == 2:
+                            屏幕.blit(盾牌攻擊3, (random.randint(h1, h2), 倉鼠.座標[1]))
+                            倉鼠.移動次數 += 1
 
-        for enemy in enemy_list:
-            if enemy.pla.x <= 722:
-                if enemy.typ == 'cat':
-                    if enemy.far == None:
-                        if enemy.move % 8 == 0 or enemy.move % 8 == 1:
-                            game_window.blit(cat_walk1, (enemy.pla[0], enemy.pla[1]))
-                            enemy.move += 1
-                        elif enemy.move % 8 == 2 or enemy.move % 8 == 3:
-                            game_window.blit(cat_walk2, (enemy.pla[0], enemy.pla[1]))
-                            enemy.move += 1
-                        elif enemy.move % 8 == 4 or enemy.move % 8 == 5:
-                            game_window.blit(cat_walk3, (enemy.pla[0], enemy.pla[1]))
-                            enemy.move += 1
-                        elif enemy.move % 8 == 6 or enemy.move % 8 == 7:
-                            game_window.blit(cat_walk4, (enemy.pla[0], enemy.pla[1]))
-                            enemy.move += 1
+        for 敵人 in 敵人列表:
+            if 敵人.座標.x <= 722:
+                if 敵人.類型 == '貓':
+                    if 敵人.最遠座標 == None:
+                        if 敵人.移動次數 % 8 == 0 or 敵人.移動次數 % 8 == 1:
+                            屏幕.blit(貓走動1, (敵人.座標[0], 敵人.座標[1]))
+                            敵人.移動次數 += 1
+                        elif 敵人.移動次數 % 8 == 2 or 敵人.移動次數 % 8 == 3:
+                            屏幕.blit(貓走動2, (敵人.座標[0], 敵人.座標[1]))
+                            敵人.移動次數 += 1
+                        elif 敵人.移動次數 % 8 == 4 or 敵人.移動次數 % 8 == 5:
+                            屏幕.blit(貓走動3, (敵人.座標[0], 敵人.座標[1]))
+                            敵人.移動次數 += 1
+                        elif 敵人.移動次數 % 8 == 6 or 敵人.移動次數 % 8 == 7:
+                            屏幕.blit(貓走動4, (敵人.座標[0], 敵人.座標[1]))
+                            敵人.移動次數 += 1
                     else:
-                        if enemy.move % 2 == 0:
-                            game_window.blit(cat_attack1, (random.randint(x1, x2), enemy.pla[1]))
-                            enemy.move += 1
-                        elif enemy.move % 2 == 1:
-                            game_window.blit(cat_attack2, (random.randint(x1, x2), enemy.pla[1]))
-                            enemy.move += 1
+                        if 敵人.移動次數 % 2 == 0:
+                            屏幕.blit(貓攻擊1, (random.randint(x1, x2), 敵人.座標[1]))
+                            敵人.移動次數 += 1
+                        elif 敵人.移動次數 % 2 == 1:
+                            屏幕.blit(貓攻擊2, (random.randint(x1, x2), 敵人.座標[1]))
+                            敵人.移動次數 += 1
                        
-                elif enemy.typ == 'dog':
-                    if enemy.far == None:
-                        if enemy.move % 8 == 0 or enemy.move % 8 == 1:
-                            game_window.blit(dog_walk1, (enemy.pla[0], enemy.pla[1]))
-                            enemy.move += 1
-                        elif enemy.move % 8 == 2 or enemy.move % 8 == 3:
-                            game_window.blit(dog_walk2, (enemy.pla[0], enemy.pla[1]))
-                            enemy.move += 1
-                        elif enemy.move % 8 == 4 or enemy.move % 8 == 5:
-                            game_window.blit(dog_walk3, (enemy.pla[0], enemy.pla[1]))
-                            enemy.move += 1
-                        elif enemy.move % 8 == 6 or enemy.move % 8 == 7:
-                            game_window.blit(dog_walk4, (enemy.pla[0], enemy.pla[1]))
-                            enemy.move += 1
+                elif 敵人.類型 == '狗':
+                    if 敵人.最遠座標 == None:
+                        if 敵人.移動次數 % 8 == 0 or 敵人.移動次數 % 8 == 1:
+                            屏幕.blit(狗走動1, (敵人.座標[0], 敵人.座標[1]))
+                            敵人.移動次數 += 1
+                        elif 敵人.移動次數 % 8 == 2 or 敵人.移動次數 % 8 == 3:
+                            屏幕.blit(狗走動2, (敵人.座標[0], 敵人.座標[1]))
+                            敵人.移動次數 += 1
+                        elif 敵人.移動次數 % 8 == 4 or 敵人.移動次數 % 8 == 5:
+                            屏幕.blit(狗走動3, (敵人.座標[0], 敵人.座標[1]))
+                            敵人.移動次數 += 1
+                        elif 敵人.移動次數 % 8 == 6 or 敵人.移動次數 % 8 == 7:
+                            屏幕.blit(狗走動4, (敵人.座標[0], 敵人.座標[1]))
+                            敵人.移動次數 += 1
                     else:
-                        if enemy.move % 2 == 0:
-                            game_window.blit(dog_attack1, (random.randint(x1, x2), enemy.pla[1]))
-                            enemy.move += 1
-                        elif enemy.move % 2 == 1:
-                            game_window.blit(dog_attack2, (random.randint(x1, x2), enemy.pla[1]))
-                            enemy.move += 1
+                        if 敵人.移動次數 % 2 == 0:
+                            屏幕.blit(狗攻擊1, (random.randint(x1, x2), 敵人.座標[1]))
+                            敵人.移動次數 += 1
+                        elif 敵人.移動次數 % 2 == 1:
+                            屏幕.blit(狗攻擊2, (random.randint(x1, x2), 敵人.座標[1]))
+                            敵人.移動次數 += 1
 
-        for bird in enemy_sp_list:
-            if bird.charm == False:
-                if bird.pla.x <= 922:
-                    if bird.move % 4 == 0 or bird.move % 4 == 1:
-                        game_window.blit(bird_walk1, (bird.pla[0], bird.pla[1]))
-                        bird.move += 1
+        for 鳥 in 敵人特殊角色列表:
+            if 鳥.魅惑 == False:
+                if 鳥.座標.x <= 922:
+                    if 鳥.移動次數 % 4 == 0 or 鳥.移動次數 % 4 == 1:
+                        屏幕.blit(鳥走動1, (鳥.座標[0], 鳥.座標[1]))
+                        鳥.移動次數 += 1
                     else:
-                        game_window.blit(bird_walk2, (bird.pla[0], bird.pla[1]))
-                        bird.move += 1
+                        屏幕.blit(鳥走動2, (鳥.座標[0], 鳥.座標[1]))
+                        鳥.移動次數 += 1
             else:
-                if bird.pla.x == 360:
-                    if bird.move % 5 <= 1:
-                        game_window.blit(bird_loved2, (bird.pla[0], bird.pla[1]))
-                        bird.move += 1
-                    elif bird.move % 5 <= 3:
-                        game_window.blit(bird_loved1, (bird.pla[0], bird.pla[1]))
-                        bird.move += 1
+                if 鳥.座標.x == 360:
+                    if 鳥.移動次數 % 5 <= 1:
+                        屏幕.blit(鳥超愛2, (鳥.座標[0], 鳥.座標[1]))
+                        鳥.移動次數 += 1
+                    elif 鳥.移動次數 % 5 <= 3:
+                        屏幕.blit(鳥超愛1, (鳥.座標[0], 鳥.座標[1]))
+                        鳥.移動次數 += 1
                     else:
-                        game_window.blit(bird_loved2, (bird.pla[0], bird.pla[1]))
-                        enemy_list.clear()
-                        bird.move = 0
-                        bird.pla.x += 6
+                        屏幕.blit(鳥超愛2, (鳥.座標[0], 鳥.座標[1]))
+                        敵人列表.clear()
+                        鳥.移動次數 = 0
+                        鳥.座標.x += 6
                 else:
-                    if bird.move % 4 == 0 or bird.move % 4 == 1:
-                        game_window.blit(bird_loved1, (bird.pla[0], bird.pla[1]))
-                        bird.move += 1
+                    if 鳥.移動次數 % 4 == 0 or 鳥.移動次數 % 4 == 1:
+                        屏幕.blit(鳥超愛1, (鳥.座標[0], 鳥.座標[1]))
+                        鳥.移動次數 += 1
                     else:
-                        game_window.blit(bird_loved2, (bird.pla[0], bird.pla[1]))
-                        bird.move += 1
-                    if (bird.pla.x + 6) == 360:
-                        bird.move = 0
+                        屏幕.blit(鳥超愛2, (鳥.座標[0], 鳥.座標[1]))
+                        鳥.移動次數 += 1
+                    if (鳥.座標.x + 6) == 360:
+                        鳥.移動次數 = 0
                    
-        for sp_hamster in hamster_sp_list:
-            if sp_hamster.typ == 'archer':
-                in_range = False
-                for bird in enemy_sp_list:
-                    if bird.pla.x == 360:
-                        in_range = True
+        for 特殊倉鼠 in 倉鼠特殊角色列表:
+            if 特殊倉鼠.類型 == '弓箭手':
+                目標在範圍內 = False
+                for 鳥 in 敵人特殊角色列表:
+                    if 鳥.座標.x == 360:
+                        目標在範圍內 = True
                         break
                
-                if in_range:
-                    shoot.play(0)
-                    if sp_hamster.move % 16 == 0 or sp_hamster.move % 16 == 1:
-                        game_window.blit(archer_attack1, (sp_hamster.pla[0], sp_hamster.pla[1]))
-                    elif sp_hamster.move % 16 == 2 or sp_hamster.move % 16 == 3:
-                        game_window.blit(archer_attack2, (sp_hamster.pla[0], sp_hamster.pla[1]))
-                    elif sp_hamster.move % 16 == 4 or sp_hamster.move % 16 == 5:
-                        game_window.blit(archer_attack3, (sp_hamster.pla[0], sp_hamster.pla[1]))
-                    elif sp_hamster.move % 16 == 6 or sp_hamster.move % 16 == 7:
-                        game_window.blit(archer_attack3, (sp_hamster.pla[0], sp_hamster.pla[1]))
-                        game_window.blit(archer_arrow, (670, 130))
-                    elif sp_hamster.move % 16 == 8 or sp_hamster.move % 16 == 9:
-                        game_window.blit(archer_attack3, (sp_hamster.pla[0], sp_hamster.pla[1]))
-                        game_window.blit(archer_arrow, (610, 110))
-                    elif sp_hamster.move % 16 == 10 or sp_hamster.move % 16 == 11:
-                        game_window.blit(archer_attack4, (sp_hamster.pla[0], sp_hamster.pla[1]))
-                        game_window.blit(archer_arrow, (550, 90))
-                    elif sp_hamster.move % 16 == 12 or sp_hamster.move % 16 == 13:
-                        game_window.blit(archer_attack4, (sp_hamster.pla[0], sp_hamster.pla[1]))
-                        game_window.blit(archer_arrow, (490, 70))
-                    elif sp_hamster.move % 16 == 14 or sp_hamster.move % 16 == 15:
-                        game_window.blit(archer_attack4, (sp_hamster.pla[0], sp_hamster.pla[1]))
-                        game_window.blit(archer_arrow, (430, 50))
-                        dead.play(0)
-                        hamster_sp_list.remove(sp_hamster)
-                        enemy_sp_list.remove(bird)
+                if 目標在範圍內:
+                    射擊.play(0)
+                    if 特殊倉鼠.移動次數 % 16 == 0 or 特殊倉鼠.移動次數 % 16 == 1:
+                        屏幕.blit(弓箭手攻擊1, (特殊倉鼠.座標[0], 特殊倉鼠.座標[1]))
+                    elif 特殊倉鼠.移動次數 % 16 == 2 or 特殊倉鼠.移動次數 % 16 == 3:
+                        屏幕.blit(弓箭手攻擊2, (特殊倉鼠.座標[0], 特殊倉鼠.座標[1]))
+                    elif 特殊倉鼠.移動次數 % 16 == 4 or 特殊倉鼠.移動次數 % 16 == 5:
+                        屏幕.blit(弓箭手攻擊3, (特殊倉鼠.座標[0], 特殊倉鼠.座標[1]))
+                    elif 特殊倉鼠.移動次數 % 16 == 6 or 特殊倉鼠.移動次數 % 16 == 7:
+                        屏幕.blit(弓箭手攻擊3, (特殊倉鼠.座標[0], 特殊倉鼠.座標[1]))
+                        屏幕.blit(弓箭手弓箭, (670, 130))
+                    elif 特殊倉鼠.移動次數 % 16 == 8 or 特殊倉鼠.移動次數 % 16 == 9:
+                        屏幕.blit(弓箭手攻擊3, (特殊倉鼠.座標[0], 特殊倉鼠.座標[1]))
+                        屏幕.blit(弓箭手弓箭, (610, 110))
+                    elif 特殊倉鼠.移動次數 % 16 == 10 or 特殊倉鼠.移動次數 % 16 == 11:
+                        屏幕.blit(弓箭手攻擊4, (特殊倉鼠.座標[0], 特殊倉鼠.座標[1]))
+                        屏幕.blit(弓箭手弓箭, (550, 90))
+                    elif 特殊倉鼠.移動次數 % 16 == 12 or 特殊倉鼠.移動次數 % 16 == 13:
+                        屏幕.blit(弓箭手攻擊4, (特殊倉鼠.座標[0], 特殊倉鼠.座標[1]))
+                        屏幕.blit(弓箭手弓箭, (490, 70))
+                    elif 特殊倉鼠.移動次數 % 16 == 14 or 特殊倉鼠.移動次數 % 16 == 15:
+                        屏幕.blit(弓箭手攻擊4, (特殊倉鼠.座標[0], 特殊倉鼠.座標[1]))
+                        屏幕.blit(弓箭手弓箭, (430, 50))
+                        死亡.play(0)
+                        倉鼠特殊角色列表.remove(特殊倉鼠)
+                        敵人特殊角色列表.remove(鳥)
                         h_arrow = 0
                         h_cupid = 0
                 else:
-                    if sp_hamster.move % 4 == 0 or sp_hamster.move % 4 == 1:
-                        game_window.blit(archer_attack1, (sp_hamster.pla[0], sp_hamster.pla[1]))
-                        for bird in enemy_sp_list:
-                            if (bird.pla.x + 6) == 360:
-                                sp_hamster.move = 0
-                    elif sp_hamster.move % 4 == 2 or sp_hamster.move % 4 == 3:
-                        game_window.blit(archer_attack2, (sp_hamster.pla[0], sp_hamster.pla[1]))
-                        for bird in enemy_sp_list:
-                            if (bird.pla.x + 6) == 360:
-                                sp_hamster.move = 0
-                sp_hamster.move += 1
+                    if 特殊倉鼠.移動次數 % 4 == 0 or 特殊倉鼠.移動次數 % 4 == 1:
+                        屏幕.blit(弓箭手攻擊1, (特殊倉鼠.座標[0], 特殊倉鼠.座標[1]))
+                        for 鳥 in 敵人特殊角色列表:
+                            if (鳥.座標.x + 6) == 360:
+                                特殊倉鼠.移動次數 = 0
+                    elif 特殊倉鼠.移動次數 % 4 == 2 or 特殊倉鼠.移動次數 % 4 == 3:
+                        屏幕.blit(弓箭手攻擊2, (特殊倉鼠.座標[0], 特殊倉鼠.座標[1]))
+                        for 鳥 in 敵人特殊角色列表:
+                            if (鳥.座標.x + 6) == 360:
+                                特殊倉鼠.移動次數 = 0
+                特殊倉鼠.移動次數 += 1
        
-            elif sp_hamster.typ == 'cupid':
-                in_range = False
-                for bird in enemy_sp_list:
-                    if bird.pla.x == 360:
-                        in_range = True
+            elif 特殊倉鼠.類型 == '邱比特':
+                目標在範圍內 = False
+                for 鳥 in 敵人特殊角色列表:
+                    if 鳥.座標.x == 360:
+                        目標在範圍內 = True
                         break
                
-                if in_range:
-                    shoot.play(0)
-                    if sp_hamster.move % 16 == 0 or sp_hamster.move % 16 == 1:
-                        game_window.blit(cupid_attack1, (sp_hamster.pla[0], sp_hamster.pla[1]))
-                    elif sp_hamster.move % 16 == 2 or sp_hamster.move % 16 == 3:
-                        game_window.blit(cupid_attack2, (sp_hamster.pla[0], sp_hamster.pla[1]))
-                    elif sp_hamster.move % 16 == 4 or sp_hamster.move % 16 == 5:
-                        game_window.blit(cupid_attack3, (sp_hamster.pla[0], sp_hamster.pla[1]))
-                    elif sp_hamster.move % 16 == 6 or sp_hamster.move % 16 == 7:
-                        game_window.blit(cupid_attack3, (sp_hamster.pla[0], sp_hamster.pla[1]))
-                        game_window.blit(cupid_arrow, (670, 130))
-                    elif sp_hamster.move % 16 == 8 or sp_hamster.move % 16 == 9:
-                        game_window.blit(cupid_attack3, (sp_hamster.pla[0], sp_hamster.pla[1]))
-                        game_window.blit(cupid_arrow, (610, 110))
-                    elif sp_hamster.move % 16 == 10 or sp_hamster.move % 16 == 11:
-                        game_window.blit(cupid_attack4, (sp_hamster.pla[0], sp_hamster.pla[1]))
-                        game_window.blit(cupid_arrow, (550, 90))
-                    elif sp_hamster.move % 16 == 12 or sp_hamster.move % 16 == 13:
-                        game_window.blit(cupid_attack4, (sp_hamster.pla[0], sp_hamster.pla[1]))
-                        game_window.blit(cupid_arrow, (490, 70))
-                    elif sp_hamster.move % 16 == 14 or sp_hamster.move % 16 == 15:
-                        game_window.blit(cupid_attack4, (sp_hamster.pla[0], sp_hamster.pla[1]))
-                        game_window.blit(cupid_arrow, (430, 50))
-                        hamster_sp_list.remove(sp_hamster)
+                if 目標在範圍內:
+                    射擊.play(0)
+                    if 特殊倉鼠.移動次數 % 16 == 0 or 特殊倉鼠.移動次數 % 16 == 1:
+                        屏幕.blit(邱比特攻擊1, (特殊倉鼠.座標[0], 特殊倉鼠.座標[1]))
+                    elif 特殊倉鼠.移動次數 % 16 == 2 or 特殊倉鼠.移動次數 % 16 == 3:
+                        屏幕.blit(邱比特攻擊2, (特殊倉鼠.座標[0], 特殊倉鼠.座標[1]))
+                    elif 特殊倉鼠.移動次數 % 16 == 4 or 特殊倉鼠.移動次數 % 16 == 5:
+                        屏幕.blit(邱比特攻擊3, (特殊倉鼠.座標[0], 特殊倉鼠.座標[1]))
+                    elif 特殊倉鼠.移動次數 % 16 == 6 or 特殊倉鼠.移動次數 % 16 == 7:
+                        屏幕.blit(邱比特攻擊3, (特殊倉鼠.座標[0], 特殊倉鼠.座標[1]))
+                        屏幕.blit(邱比特弓箭, (670, 130))
+                    elif 特殊倉鼠.移動次數 % 16 == 8 or 特殊倉鼠.移動次數 % 16 == 9:
+                        屏幕.blit(邱比特攻擊3, (特殊倉鼠.座標[0], 特殊倉鼠.座標[1]))
+                        屏幕.blit(邱比特弓箭, (610, 110))
+                    elif 特殊倉鼠.移動次數 % 16 == 10 or 特殊倉鼠.移動次數 % 16 == 11:
+                        屏幕.blit(邱比特攻擊4, (特殊倉鼠.座標[0], 特殊倉鼠.座標[1]))
+                        屏幕.blit(邱比特弓箭, (550, 90))
+                    elif 特殊倉鼠.移動次數 % 16 == 12 or 特殊倉鼠.移動次數 % 16 == 13:
+                        屏幕.blit(邱比特攻擊4, (特殊倉鼠.座標[0], 特殊倉鼠.座標[1]))
+                        屏幕.blit(邱比特弓箭, (490, 70))
+                    elif 特殊倉鼠.移動次數 % 16 == 14 or 特殊倉鼠.移動次數 % 16 == 15:
+                        屏幕.blit(邱比特攻擊4, (特殊倉鼠.座標[0], 特殊倉鼠.座標[1]))
+                        屏幕.blit(邱比特弓箭, (430, 50))
+                        倉鼠特殊角色列表.remove(特殊倉鼠)
                         h_arrow = 0
                         h_cupid = 0
-                        bird.charm = True
+                        鳥.魅惑 = True
                        
                 else:
-                    if sp_hamster.move % 4 == 0 or sp_hamster.move % 4 == 1:
-                        game_window.blit(cupid_attack1, (sp_hamster.pla[0], sp_hamster.pla[1]))
-                        for bird in enemy_sp_list:
-                            if (bird.pla.x + 6) == 360:
-                                sp_hamster.move = 0
-                    elif sp_hamster.move % 4 == 2 or sp_hamster.move % 4 == 3:
-                        game_window.blit(cupid_attack2, (sp_hamster.pla[0], sp_hamster.pla[1]))
-                        for bird in enemy_sp_list:
-                            if (bird.pla.x + 6) == 360:
-                                sp_hamster.move = 0
-                sp_hamster.move += 1
+                    if 特殊倉鼠.移動次數 % 4 == 0 or 特殊倉鼠.移動次數 % 4 == 1:
+                        屏幕.blit(邱比特攻擊1, (特殊倉鼠.座標[0], 特殊倉鼠.座標[1]))
+                        for 鳥 in 敵人特殊角色列表:
+                            if (鳥.座標.x + 6) == 360:
+                                特殊倉鼠.移動次數 = 0
+                    elif 特殊倉鼠.移動次數 % 4 == 2 or 特殊倉鼠.移動次數 % 4 == 3:
+                        屏幕.blit(邱比特攻擊2, (特殊倉鼠.座標[0], 特殊倉鼠.座標[1]))
+                        for 鳥 in 敵人特殊角色列表:
+                            if (鳥.座標.x + 6) == 360:
+                                特殊倉鼠.移動次數 = 0
+                特殊倉鼠.移動次數 += 1
 
-        update_button()
+        更新按鈕()
            
-        game_window.blit(enemy_word, (45, 90))
-        game_window.blit(my_word, (722, 90))
+        屏幕.blit(敵方塔文字, (45, 90))
+        屏幕.blit(我方塔文字, (722, 90))
         pygame.display.update()
         pygame.time.Clock().tick(15)
                            
-        if end == 1:
+        if 結束 == 1:
             break
 
         pygame.display.update()
